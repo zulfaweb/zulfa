@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>زلفة ويب | Zulfa Web - نحوّل أفكارك إلى واقع</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{font-family:'Amiri', serif !important; margin:0; padding:0; box-sizing:border-box;}
+  html{scroll-behavior:smooth; scroll-padding-top:150px;}
+  body{background:#FFF8F0; color:#2D1A3E; overflow-x:hidden;}
+  img{max-width:100%; height:auto;}
+
+  #loader{
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:#2D1A3E; z-index:9999;
+    display:flex; flex-direction:column;
+    justify-content:center; align-items:center; text-align:center;
+    transition:opacity 0.8s ease; padding:20px;
+  }
+  #loader img{width:130px; height:130px; object-fit:cover; border-radius:50%; border:3px solid #D4AF37; margin-bottom:15px; animation: pulse 1.5s infinite;}
+  @keyframes pulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.08); } }
+  #loader h1{font-size:clamp(38px, 10vw, 58px); color:#D4AF37; line-height:1;}
+  #loader h2{font-size:20px; color:white; letter-spacing:4px; font-weight:400; margin-top:5px;}
+  #loader p{color:#D4AF37; font-size:19px; margin-top:5px;}
+  #loader .line{width:min(200px, 80vw); height:4px; background:#4A2A63; border-radius:10px; margin-top:22px; overflow:hidden;}
+  #loader .line span{display:block; height:100%; width:0%; background:#D4AF37; animation: load 2.8s forwards;}
+  @keyframes load{ to{ width:100%; } }
+  #loader .loading-text{color:white; font-size:19px; margin-top:14px;}
+
+  header{
+    background:#2D1A3E;
+    position:sticky; top:0; z-index:100;
+    padding:8px 6px 8px;
+    text-align:center;
+    box-shadow:0 4px 15px rgba(0,0,0,0.25);
+    border-bottom:2px solid #D4AF37;
+  }
+  header h1{color:#D4AF37; font-size:clamp(20px, 5vw, 24px); line-height:1; margin-bottom:7px;}
+  header h1 span{color:white; font-size:10px; display:block; letter-spacing:4px; margin-top:1px;}
+  .nav-wrap{display:flex; flex-wrap:wrap; gap:6px; justify-content:center; padding:2px 0;}
+
+  .nav-btn, .btn{
+    position:relative; overflow:hidden;
+    background:transparent; color:#D4AF37;
+    border:1.5px solid #D4AF37; border-radius:30px;
+    text-decoration:none; font-weight:bold;
+    display:inline-block; cursor:pointer;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    white-space:nowrap; flex-shrink:1;
+  }
+  .nav-btn{padding:6px 12px; font-size:clamp(13px, 3.5vw, 15px);}
+  .btn{padding:12px 30px; font-size:clamp(19px, 5vw, 22px); margin-top:15px;}
+  .nav-btn:hover, .btn:hover{
+    background:#D4AF37; color:#2D1A3E;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(212,175,55,0.4);
+  }
+  .nav-btn:active, .btn:active{transform: translateY(1px) scale(0.96); box-shadow: 0 2px 8px rgba(212,175,55,0.3);}
+  .section .btn{color:#A67C00; border-color:#D4AF37;}
+  .section .btn:hover{background:#D4AF37; color:#2D1A3E;}
+  .order-box .btn{width:100%; font-size:clamp(20px, 5vw, 24px); padding:15px; color:#A67C00;}
+  .order-box .btn:hover{background:#D4AF37; color:#2D1A3E;}
+
+  .ripple{position:absolute; border-radius:50%; background:rgba(255,255,255,0.7); transform:scale(0); animation: ripple 0.6s linear; pointer-events:none;}
+  @keyframes ripple{ to{ transform:scale(4); opacity:0; } }
+
+  .nav-btn::after, .btn::after{
+    content:''; position:absolute; top:0; left:-100%;
+    width:60%; height:100%;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,0.5), transparent);
+    transform:skewX(-20deg); transition:0.6s;
+  }
+  .nav-btn:hover::after, .btn:hover::after{ left:130%; }
+
+  .section, .hero{scroll-margin-top:160px; padding-top:70px !important;}
+
+  .hero{background:linear-gradient(180deg,#2D1A3E,#4A2A63); color:white; text-align:center; padding:50px 20px 60px;}
+  .hero img{width:clamp(140px, 40vw, 180px); height:clamp(140px, 40vw, 180px); object-fit:cover; border-radius:50%; border:3px solid #D4AF37; margin-bottom:20px;}
+  .hero h2{font-size:clamp(28px, 8vw, 42px); color:#D4AF37; line-height:1.4;}
+  .hero p{font-size:clamp(18px, 5vw, 22px); margin:8px 0;}
+
+  .section{padding:40px 20px; text-align:center;}
+  .section h3{font-size:clamp(26px, 7vw, 32px); color:#2D1A3E; margin-bottom:20px;}
+  .section h3 span{color:#D4AF37;}
+  .cards{display:flex; flex-wrap:wrap; gap:15px; justify-content:center;}
+  .card{
+    background:white; border:1px solid #E8DCC8; border-radius:15px; padding:25px; width:300px; max-width:100%;
+    box-shadow:0 5px 15px rgba(0,0,0,0.08); transition:0.3s;
+  }
+  .card:hover{transform:translateY(-5px); box-shadow:0 12px 25px rgba(45,26,62,0.15); border-color:#D4AF37;}
+  .card h4{font-size:clamp(20px, 5vw, 24px); color:#2D1A3E; margin-bottom:10px;}
+  .card p{font-size:clamp(16px, 4.5vw, 18px); color:#666; line-height:1.8;}
+  .price{color:#D4AF37; font-size:20px; font-weight:bold; margin-top:10px; display:inline-block; text-decoration:none;}
+  .works{background:#F5EEDD;}
+  .reveal{opacity:0; transform:translateY(30px); transition:all 0.7s ease;}
+  .reveal.show{opacity:1; transform:translateY(0);}
+
+  .social-card{
+    background:#2D1A3E; border:2px solid #D4AF37; border-radius:20px; padding:25px 20px; width:310px; max-width:100%;
+    text-align:center; transition:0.3s;
+  }
+  .social-card:hover{transform:translateY(-5px); box-shadow:0 12px 25px rgba(212,175,55,0.3);}
+  .social-card h4{font-size:clamp(22px, 6vw, 26px); color:#D4AF37; margin-bottom:8px;}
+  .social-card p{font-size:19px; color:white; margin-bottom:15px;}
+  .qr-img{
+    width:200px; height:200px; max-width:80vw; object-fit:cover; border-radius:15px;
+    border:3px solid #D4AF37; background:white; margin:0 auto 15px; display:block;
+  }
+
+  #chosen-service{
+    display:none; background:#FFF8F0; color:#2D1A3E;
+    max-width:520px; width:100%; margin:0 auto 25px; padding:20px;
+    border-radius:18px; border:2px solid #D4AF37;
+    font-size:21px; font-weight:bold; text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.25);
+    animation: pop 0.5s ease;
+  }
+  @keyframes pop{ from{ transform:scale(0.9); opacity:0; } to{ transform:scale(1); opacity:1; } }
+
+  .order-box{background:white; max-width:550px; width:100%; margin:0 auto; padding:30px 25px; border-radius:20px; box-shadow:0 10px 25px rgba(0,0,0,0.1); border:1px solid #E8DCC8; text-align:right;}
+  .order-box label{font-size:21px; font-weight:bold; color:#2D1A3E; display:block; margin:15px 0 8px;}
+  .order-box input, .order-box select, .order-box textarea{
+    width:100%; padding:14px; font-size:clamp(17px, 4.5vw, 20px); border:2px solid #E8DCC8; border-radius:12px; background:#FFF8F0; outline:none; transition:0.3s;
+  }
+  .order-box input:focus, .order-box select:focus, .order-box textarea:focus{border-color:#D4AF37; box-shadow:0 0 0 3px rgba(212,175,55,0.2);}
+  .order-box select{cursor:pointer;}
+  .order-box textarea{resize:vertical; min-height:90px;}
+
+  .footer{background:#2D1A3E; color:white; padding:30px 20px; text-align:center;}
+  .footer a{color:#D4AF37; text-decoration:none; font-size:22px;}
+
+  /* ===== التجاوب مع كل الشاشات ===== */
+
+  /* تابلت */
+  @media (max-width: 900px){
+    html{scroll-padding-top:170px;}
+    .section, .hero{scroll-margin-top:170px;}
+    .card{width:calc(50% - 15px); min-width:240px;}
+    .social-card{width:calc(50% - 15px); min-width:260px;}
+  }
+
+  /* تلفون */
+  @media (max-width: 600px){
+    html{scroll-padding-top:180px;}
+    header{padding:10px 8px;}
+    .nav-wrap{gap:5px;}
+    .nav-btn{padding:6px 9px; flex:1 1 auto;}
+    .section{padding:30px 12px;}
+    .hero{padding:35px 12px 45px;}
+    .card{width:100%; padding:20px 16px;}
+    .social-card{width:100%; padding:20px 14px;}
+    .order-box{padding:22px 16px;}
+    #chosen-service{padding:16px 12px; font-size:19px;}
+    .footer{padding:25px 12px;}
+  }
+
+  /* تلفون صغير */
+  @media (max-width: 380px){
+    .nav-btn{font-size:12px; padding:5px 7px;}
+    .btn{padding:10px 18px;}
+    .qr-img{width:170px; height:170px;}
+  }
+
+  /* شاشة كبيرة - لابتوب / كمبيوتر */
+  @media (min-width: 1100px){
+    .section{max-width:1100px; margin:0 auto;}
+    .cards{max-width:1000px; margin:0 auto;}
+  }
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <img src="logo.jpg.png" alt="Zulfa Web">
+  <h1>زلفة ويب</h1>
+  <h2>ZULFA WEB</h2>
+  <p>Turn Ideas Into Reality</p>
+  <div class="line"><span></span></div>
+  <div class="loading-text">جارٍ التحميل ...</div>
+</div>
+
+<header>
+  <h1>زلفة ويب <span>ZULFA WEB</span></h1>
+  <div class="nav-wrap">
+    <a href="#about" class="nav-btn">من أنا</a>
+    <a href="#services" class="nav-btn">خدماتي</a>
+    <a href="#works" class="nav-btn">أعمالي</a>
+    <a href="#order" class="nav-btn">اطلب موقعك</a>
+    <a href="#contact" class="nav-btn">تواصل معي</a>
+  </div>
+</header>
+
+<div class="hero reveal">
+  <img src="logo.jpg.png" alt="Zulfa Web">
+  <h2>نحوّل أفكارك إلى واقع</h2>
+  <p>Turn Ideas Into Reality</p>
+  <p>نصمّم • نطوّر • نبدع | Design • Develop • Innovate</p>
+  <a class="btn" href="#order">اطلب موقعك الآن</a>
+</div>
+
+<div class="section reveal" id="about" style="background:white; padding:60px 20px;">
+  <h3>من أنا؟ <span>• Who Am I?</span></h3>
+  <div style="display:flex; flex-wrap:wrap; gap:30px; justify-content:center; align-items:center; max-width:950px; margin:0 auto; text-align:center;">
+    <div style="flex:1; min-width:280px; text-align:center;">
+      <div style="width:min(280px, 70vw); height:min(280px, 70vw); margin:0 auto; border-radius:50%; border:4px solid #D4AF37; overflow:hidden; background:#2D1A3E; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 25px rgba(45,26,62,0.2);">
+        <img src="logo.jpg.png" alt="شعار زلفة ويب" style="width:100%; height:100%; object-fit:cover;">
+      </div>
+      <h4 style="font-size:32px; color:#2D1A3E; margin-top:15px;">زلفة</h4>
+      <p style="color:#D4AF37; font-size:20px;">مصممة مواقع ويب | Web Designer</p>
+      <p style="color:#2D1A3E; font-size:18px; margin-top:5px;">Design • Develop • Innovate</p>
+    </div>
+    <div style="flex:1.5; min-width:300px; text-align:right;">
+      <h4 style="font-size:30px; color:#2D1A3E; margin-bottom:15px; text-align:center;">من أنا؟</h4>
+      <p style="font-size:22px; line-height:2; color:#444;">أنا مصممة مواقع ويب، أحوّل الأفكار إلى تصاميم رقمية تجمع بين الأناقة والابتكار والاحترافية.</p>
+      <p style="font-size:22px; line-height:2; color:#444; margin-top:15px;">أؤمن أن لكل مشروع هوية تستحق أن تظهر بأفضل صورة، لذلك أحرص على ابتكار مواقع عصرية، بتفاصيل مدروسة وتجربة استخدام مميزة، تعكس رؤيتك وتمنح مشروعك حضوراً رقمياً يليق به.</p>
+      <p style="font-size:22px; line-height:2; color:#2D1A3E; margin-top:15px; font-weight:bold; background:#FFF8F0; padding:15px; border-right:4px solid #D4AF37; border-radius:10px;">شغفي هو التصميم، وهدفي أن أجعل لمشروعك حضوراً لا يُنسى.</p>
+      <div style="margin-top:20px; display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+        <span style="background:#F5EEDD; padding:8px 18px; border-radius:20px; font-size:18px;">✦ الأناقة</span>
+        <span style="background:#F5EEDD; padding:8px 18px; border-radius:20px; font-size:18px;">✦ الابتكار</span>
+        <span style="background:#F5EEDD; padding:8px 18px; border-radius:20px; font-size:18px;">✦ الاحترافية</span>
+        <span style="background:#F5EEDD; padding:8px 18px; border-radius:20px; font-size:18px;">✦ حضور لا يُنسى</span>
+      </div>
+      <div style="text-align:center; margin-top:20px;">
+        <a class="btn" href="#order">ابدأ مشروعك معي</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section reveal" id="services">
+  <h3>خدماتي <span>• My Services</span></h3>
+  <div class="cards">
+    <div class="card"><h4>تصميم المواقع التعريفية</h4><p>مواقع أنيقة تعرّف بمشروعك وخدماتك، وتترك انطباعاً احترافياً لدى زوارك.</p><a href="#order" class="btn" style="font-size:19px; padding:10px 22px;">اطلب هذه الخدمة</a></div>
+    <div class="card"><h4>تصميم صفحات الهبوط (Landing Pages)</h4><p>صفحات مركزة ومصممة لتحويل الزائر إلى عميل، وزيادة الحجوزات والمبيعات.</p><a href="#order" class="btn" style="font-size:19px; padding:10px 22px;">اطلب هذه الخدمة</a></div>
+    <div class="card"><h4>تصميم المتاجر الإلكترونية</h4><p>متاجر متكاملة لعرض منتجاتك وبيعها بسهولة، مع تجربة تسوّق مميزة.</p><a href="#order" class="btn" style="font-size:19px; padding:10px 22px;">اطلب هذه الخدمة</a></div>
+    <div class="card"><h4>تصميم مواقع الحجز الإلكتروني</h4><p>مواقع تتيح لعملائك حجز خدماتك ومواعيدك بطريقة سهلة وسريعة.</p><a href="#order" class="btn" style="font-size:19px; padding:10px 22px;">اطلب هذه الخدمة</a></div>
+    <div class="card"><h4>تصميم مواقع الشركات والمؤسسات</h4><p>مواقع احترافية تعكس هوية شركتك، وتعزز ثقة عملائك ومصداقيتك.</p><a href="#order" class="btn" style="font-size:19px; padding:10px 22px;">اطلب هذه الخدمة</a></div>
+    <div class="card"><h4>تصميم مواقع المدونات والمقالات</h4><p>منصات أنيقة لنشر مقالاتك وأفكارك، مع تجربة قراءة مريحة وجذابة.</p><a href="#order" class="btn" style="font-size:19px; padding:10px 22px;">اطلب هذه الخدمة</a></div>
+  </div>
+</div>
+
+<div class="section works reveal" id="works">
+  <h3>أعمالي <span>• My Work</span></h3>
+  <div class="cards">
+    <div class="card">
+      <h4>ودق كوفي</h4>
+      <p>موقع إلكتروني لمقهى</p>
+      <a href="https://wadqcofe.github.io/WDAQ/" target="_blank" class="price">عرض الموقع</a>
+    </div>
+    <div class="card">
+      <h4>روقان كوفي</h4>
+      <p>موقع إلكتروني لمقهى</p>
+      <a href="https://roqan-cafe.netlify.app" target="_blank" class="price">عرض الموقع</a>
+    </div>
+    <div class="card"><h4>الموقع الثالث</h4><p>اكتب اسم الموقع هنا</p><a href="#" class="price">عرض الموقع</a></div>
+  </div>
+</div>
+
+<div class="section reveal" id="order" style="background:#F5EEDD; padding:60px 20px;">
+  <h3>اطلب موقعك <span>• Order Your Website</span></h3>
+  <p style="font-size:22px; color:#666; margin-bottom:25px;">اختر الخدمة التي تريدها، ثم تواصل معنا</p>
+  <div class="order-box">
+    <label for="name">الاسم الكريم</label>
+    <input type="text" id="name" placeholder="اكتب اسمك هنا">
+    <label for="service">اختر الخدمة *</label>
+    <select id="service">
+      <option value="">-- اختر الخدمة من القائمة --</option>
+      <option>تصميم المواقع التعريفية</option>
+      <option>تصميم صفحات الهبوط (Landing Pages)</option>
+      <option>تصميم المتاجر الإلكترونية</option>
+      <option>تصميم مواقع الحجز الإلكتروني</option>
+      <option>تصميم مواقع الشركات والمؤسسات</option>
+      <option>تصميم مواقع المدونات والمقالات</option>
+    </select>
+    <label for="details">تفاصيل مشروعك</label>
+    <textarea id="details" placeholder="اكتب فكرة مشروعك باختصار... مثلاً: أريد متجراً لبيع العبايات"></textarea>
+    <div style="text-align:center;">
+      <button class="btn" onclick="sendOrder()">أرسل طلبك</button>
+    </div>
+  </div>
+</div>
+
+<div class="section reveal" id="contact" style="background:#2D1A3E; padding:60px 20px;">
+  <h3 style="color:white;">تواصل معي <span>• Contact Me</span></h3>
+  <p style="font-size:22px; color:#D4AF37; margin-bottom:10px;">امسح الـ QR أو اضغط على الزر للمتابعة</p>
+  <p style="font-size:18px; color:white; opacity:0.8; margin-bottom:15px;">Scan QR Code or Tap The Button</p>
+  <div id="chosen-service"></div>
+  <div style="display:flex; flex-wrap:wrap; gap:15px; justify-content:center;">
+    <div class="social-card">
+      <h4>📸 إنستغرام</h4>
+      <p>@zoza_sharif2012</p>
+      <img src="insta-qr.jpg.png" alt="QR إنستغرام" class="qr-img">
+      <a class="btn" href="https://instagram.com/zoza_sharif2012" target="_blank" style="margin-top:0; font-size:19px; padding:10px 25px;">متابعة على إنستغرام</a>
+    </div>
+    <div class="social-card">
+      <h4>👻 سناب شات</h4>
+      <p>zezo_sharif159</p>
+      <img src="snap-qr.jpg.jpg" alt="QR سناب شات" class="qr-img">
+      <a class="btn" href="https://snapchat.com/add/zezo_sharif159" target="_blank" style="margin-top:0; font-size:19px; padding:10px 25px;">إضافة على سناب شات</a>
+    </div>
+    <div class="social-card">
+      <h4>💬 واتساب</h4>
+      <p>0997079730</p>
+      <img src="whatsapp-qr.jpg.jpg" alt="QR واتساب" class="qr-img">
+      <a class="btn" href="https://wa.me/249997079730" target="_blank" style="margin-top:0; font-size:19px; padding:10px 25px;">مراسلة على واتساب</a>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <h3 style="color:#D4AF37;">زلفة ويب - Zulfa Web</h3>
+  <p>إنستغرام: @zoza_sharif2012 | سناب شات: zezo_sharif159</p>
+  <a href="https://wa.me/249997079730">0997079730</a>
+  <p style="margin-top:10px;">© 2026 Zulfa Web - جميع الحقوق محفوظة</p>
+</div>
+
+<script>
+  window.addEventListener('load', function(){
+    setTimeout(function(){
+      var loader = document.getElementById('loader');
+      loader.style.opacity = '0';
+      setTimeout(function(){ loader.style.display = 'none'; }, 800);
+    }, 2800);
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach(function(link){
+    link.addEventListener('click', function(e){
+      var id = this.getAttribute('href');
+      if(id.length > 1){
+        var target = document.querySelector(id);
+        if(target){
+          e.preventDefault();
+          var top = target.getBoundingClientRect().top + window.pageYOffset - 140;
+          window.scrollTo({top: top, behavior:'smooth'});
+        }
+      }
+    });
+  });
+
+  document.querySelectorAll('.nav-btn, .btn').forEach(function(button){
+    button.addEventListener('click', function(e){
+      var rect = button.getBoundingClientRect();
+      var ripple = document.createElement('span');
+      var size = Math.max(rect.width, rect.height);
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+      ripple.classList.add('ripple');
+      button.appendChild(ripple);
+      setTimeout(function(){ ripple.remove(); }, 600);
+    });
+  });
+
+  function revealOnScroll(){
+    document.querySelectorAll('.reveal').forEach(function(el){
+      var top = el.getBoundingClientRect().top;
+      if(top < window.innerHeight - 80){ el.classList.add('show'); }
+    });
+  }
+  window.addEventListener('scroll', revealOnScroll);
+  revealOnScroll();
+
+  function sendOrder(){
+    var name = document.getElementById('name').value;
+    var service = document.getElementById('service').value;
+    var details = document.getElementById('details').value;
+    if(!service){ alert('من فضلك اختر الخدمة أولاً من القائمة'); return; }
+    var box = document.getElementById('chosen-service');
+    var text = '<div style="font-size:26px; color:#2D1A3E;">✅ تم استلام طلبك</div>';
+    text += '<div style="font-size:20px; color:#666; font-weight:normal; margin:8px 0;">بياناتك محفوظة، ما ح تضيع</div>';
+    text += '<div style="background:#F5EEDD; padding:12px; border-radius:12px; font-size:20px;">الخدمة: ' + service + '</div>';
+    if(name) text += '<div style="font-size:19px; margin-top:8px; font-weight:normal;">الاسم: ' + name + '</div>';
+    if(details) text += '<div style="font-size:18px; font-weight:normal; color:#555; margin-top:5px;">' + details + '</div>';
+    text += '<div style="font-size:21px; color:#A67C00; margin-top:12px;">الآن اختر طريقة التواصل المناسبة لك لإرسال طلبك 👇</div>';
+    box.innerHTML = text;
+    box.style.display = 'block';
+    var contact = document.getElementById('contact');
+    var top = contact.getBoundingClientRect().top + window.pageYOffset - 140;
+    window.scrollTo({top: top, behavior:'smooth'});
+  }
+
+  document.querySelectorAll('.card .btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var serviceName = this.parentElement.querySelector('h4').innerText;
+      setTimeout(function(){
+        var select = document.getElementById('service');
+        for(var i=0; i<select.options.length; i++){
+          if(select.options[i].text === serviceName){ select.selectedIndex = i; break; }
+        }
+      }, 100);
+    });
+  });
+</script>
+
+</body>
+</html>
